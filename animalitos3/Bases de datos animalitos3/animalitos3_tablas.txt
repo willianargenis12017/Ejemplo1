@@ -1,0 +1,517 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- -----------------------------------------------------
+-- Schema animalitos3
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema animalitos3
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `animalitos3` DEFAULT CHARACTER SET utf8 ;
+USE `animalitos3` ;
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`vendedor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`vendedor` (
+  `idvendedor` INT NOT NULL AUTO_INCREMENT,
+  `vendedorcol` VARCHAR(50) NULL,
+  PRIMARY KEY (`idvendedor`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`horasorteo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`horasorteo` (
+  `idhorasorteo` INT NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`idhorasorteo`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`hora_de_sorteo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`hora_de_sorteo` (
+  `idhora_de_sorteo` INT NOT NULL AUTO_INCREMENT,
+  `horasorteo_idhorasorteo` INT NOT NULL,
+  PRIMARY KEY (`idhora_de_sorteo`),
+  INDEX `fk_hora_de_sorteo_horasorteo1_idx` (`horasorteo_idhorasorteo` ASC),
+  CONSTRAINT `fk_hora_de_sorteo_horasorteo1`
+    FOREIGN KEY (`horasorteo_idhorasorteo`)
+    REFERENCES `animalitos3`.`horasorteo` (`idhorasorteo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`monto_maximo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`monto_maximo` (
+  `idmonto_maximo` INT NOT NULL AUTO_INCREMENT,
+  `monto_maximo` INT NULL,
+  PRIMARY KEY (`idmonto_maximo`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`apuesta_maxima`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`apuesta_maxima` (
+  `idapuesta_maxima` INT NOT NULL AUTO_INCREMENT,
+  `monto_disponible` INT NULL,
+  `monto_maximo_idmonto_maximo` INT NOT NULL,
+  PRIMARY KEY (`idapuesta_maxima`),
+  INDEX `fk_apuesta_maxima_monto_maximo1_idx` (`monto_maximo_idmonto_maximo` ASC),
+  CONSTRAINT `fk_apuesta_maxima_monto_maximo1`
+    FOREIGN KEY (`monto_maximo_idmonto_maximo`)
+    REFERENCES `animalitos3`.`monto_maximo` (`idmonto_maximo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`numeros`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`numeros` (
+  `idnumeros` INT NOT NULL AUTO_INCREMENT,
+  `numeros` INT NULL,
+  `apuesta_maxima_idapuesta_maxima` INT NOT NULL,
+  PRIMARY KEY (`idnumeros`),
+  INDEX `fk_numeros_apuesta_maxima1_idx` (`apuesta_maxima_idapuesta_maxima` ASC),
+  CONSTRAINT `fk_numeros_apuesta_maxima1`
+    FOREIGN KEY (`apuesta_maxima_idapuesta_maxima`)
+    REFERENCES `animalitos3`.`apuesta_maxima` (`idapuesta_maxima`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`premio`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`premio` (
+  `idpremio` INT NOT NULL,
+  `premio` VARCHAR(45) NULL,
+  PRIMARY KEY (`idpremio`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`monto_y_apuesta3`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`monto_y_apuesta3` (
+  `idmonto_y_apuesta3` INT NOT NULL AUTO_INCREMENT,
+  `numeros_idnumeros` INT NOT NULL,
+  PRIMARY KEY (`idmonto_y_apuesta3`),
+  INDEX `fk_monto_y_apuesta3_numeros1_idx` (`numeros_idnumeros` ASC),
+  CONSTRAINT `fk_monto_y_apuesta3_numeros1`
+    FOREIGN KEY (`numeros_idnumeros`)
+    REFERENCES `animalitos3`.`numeros` (`idnumeros`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`apuestas`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`apuestas` (
+  `idapuestas` INT NOT NULL AUTO_INCREMENT,
+  `monto_apuestas` VARCHAR(45) NULL,
+  `premio_idpremio` INT NOT NULL,
+  `monto_y_apuesta3_idmonto_y_apuesta3` INT NOT NULL,
+  PRIMARY KEY (`idapuestas`),
+  INDEX `fk_apuestas_premio1_idx` (`premio_idpremio` ASC),
+  INDEX `fk_apuestas_monto_y_apuesta31_idx` (`monto_y_apuesta3_idmonto_y_apuesta3` ASC),
+  CONSTRAINT `fk_apuestas_premio1`
+    FOREIGN KEY (`premio_idpremio`)
+    REFERENCES `animalitos3`.`premio` (`idpremio`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_apuestas_monto_y_apuesta31`
+    FOREIGN KEY (`monto_y_apuesta3_idmonto_y_apuesta3`)
+    REFERENCES `animalitos3`.`monto_y_apuesta3` (`idmonto_y_apuesta3`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`numero_y_apuesta1`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`numero_y_apuesta1` (
+  `idnumero_y_apuesta1` INT NOT NULL AUTO_INCREMENT,
+  `numeros_idnumeros` INT NOT NULL,
+  `apuestas_idapuestas` INT NOT NULL,
+  PRIMARY KEY (`idnumero_y_apuesta1`),
+  INDEX `fk_numero_y_apuesta1_numeros1_idx` (`numeros_idnumeros` ASC),
+  INDEX `fk_numero_y_apuesta1_apuestas1_idx` (`apuestas_idapuestas` ASC),
+  CONSTRAINT `fk_numero_y_apuesta1_numeros1`
+    FOREIGN KEY (`numeros_idnumeros`)
+    REFERENCES `animalitos3`.`numeros` (`idnumeros`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_numero_y_apuesta1_apuestas1`
+    FOREIGN KEY (`apuestas_idapuestas`)
+    REFERENCES `animalitos3`.`apuestas` (`idapuestas`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`jugada1`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`jugada1` (
+  `idjugada1` INT NOT NULL AUTO_INCREMENT,
+  `numero_y_apuesta1_idnumero_y_apuesta1` INT NOT NULL,
+  PRIMARY KEY (`idjugada1`),
+  INDEX `fk_jugada1_numero_y_apuesta11_idx` (`numero_y_apuesta1_idnumero_y_apuesta1` ASC),
+  CONSTRAINT `fk_jugada1_numero_y_apuesta11`
+    FOREIGN KEY (`numero_y_apuesta1_idnumero_y_apuesta1`)
+    REFERENCES `animalitos3`.`numero_y_apuesta1` (`idnumero_y_apuesta1`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`numero_y_apuesta2`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`numero_y_apuesta2` (
+  `idnumero_y_apuesta2` INT NOT NULL AUTO_INCREMENT,
+  `apuestas_idapuestas` INT NOT NULL,
+  `numeros_idnumeros` INT NOT NULL,
+  PRIMARY KEY (`idnumero_y_apuesta2`),
+  INDEX `fk_numero_y_apuesta2_apuestas1_idx` (`apuestas_idapuestas` ASC),
+  INDEX `fk_numero_y_apuesta2_numeros1_idx` (`numeros_idnumeros` ASC),
+  CONSTRAINT `fk_numero_y_apuesta2_apuestas1`
+    FOREIGN KEY (`apuestas_idapuestas`)
+    REFERENCES `animalitos3`.`apuestas` (`idapuestas`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_numero_y_apuesta2_numeros1`
+    FOREIGN KEY (`numeros_idnumeros`)
+    REFERENCES `animalitos3`.`numeros` (`idnumeros`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`jugada2`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`jugada2` (
+  `idjugada2` INT NOT NULL AUTO_INCREMENT,
+  `numero_y_apuesta2_idnumero_y_apuesta2` INT NOT NULL,
+  PRIMARY KEY (`idjugada2`),
+  INDEX `fk_jugada2_numero_y_apuesta21_idx` (`numero_y_apuesta2_idnumero_y_apuesta2` ASC),
+  CONSTRAINT `fk_jugada2_numero_y_apuesta21`
+    FOREIGN KEY (`numero_y_apuesta2_idnumero_y_apuesta2`)
+    REFERENCES `animalitos3`.`numero_y_apuesta2` (`idnumero_y_apuesta2`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`jugada3`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`jugada3` (
+  `idjugada3` INT NOT NULL AUTO_INCREMENT,
+  `monto_y_apuesta3_idmonto_y_apuesta3` INT NOT NULL,
+  PRIMARY KEY (`idjugada3`),
+  INDEX `fk_jugada3_monto_y_apuesta31_idx` (`monto_y_apuesta3_idmonto_y_apuesta3` ASC),
+  CONSTRAINT `fk_jugada3_monto_y_apuesta31`
+    FOREIGN KEY (`monto_y_apuesta3_idmonto_y_apuesta3`)
+    REFERENCES `animalitos3`.`monto_y_apuesta3` (`idmonto_y_apuesta3`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`monto_y_apuesta4`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`monto_y_apuesta4` (
+  `idmonto_y_apuesta4` INT NOT NULL AUTO_INCREMENT,
+  `apuestas_idapuestas` INT NOT NULL,
+  `numeros_idnumeros` INT NOT NULL,
+  PRIMARY KEY (`idmonto_y_apuesta4`),
+  INDEX `fk_monto_y_apuesta4_apuestas1_idx` (`apuestas_idapuestas` ASC),
+  INDEX `fk_monto_y_apuesta4_numeros1_idx` (`numeros_idnumeros` ASC),
+  CONSTRAINT `fk_monto_y_apuesta4_apuestas1`
+    FOREIGN KEY (`apuestas_idapuestas`)
+    REFERENCES `animalitos3`.`apuestas` (`idapuestas`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_monto_y_apuesta4_numeros1`
+    FOREIGN KEY (`numeros_idnumeros`)
+    REFERENCES `animalitos3`.`numeros` (`idnumeros`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`jugada4`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`jugada4` (
+  `idjugada4` INT NOT NULL AUTO_INCREMENT,
+  `monto_y_apuesta4_idmonto_y_apuesta4` INT NOT NULL,
+  PRIMARY KEY (`idjugada4`),
+  INDEX `fk_jugada4_monto_y_apuesta41_idx` (`monto_y_apuesta4_idmonto_y_apuesta4` ASC),
+  CONSTRAINT `fk_jugada4_monto_y_apuesta41`
+    FOREIGN KEY (`monto_y_apuesta4_idmonto_y_apuesta4`)
+    REFERENCES `animalitos3`.`monto_y_apuesta4` (`idmonto_y_apuesta4`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`monto_y_apuesta5`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`monto_y_apuesta5` (
+  `idmonto_y_apuesta5` INT NOT NULL AUTO_INCREMENT,
+  `apuestas_idapuestas` INT NOT NULL,
+  `numeros_idnumeros` INT NOT NULL,
+  PRIMARY KEY (`idmonto_y_apuesta5`),
+  INDEX `fk_monto_y_apuesta5_apuestas1_idx` (`apuestas_idapuestas` ASC),
+  INDEX `fk_monto_y_apuesta5_numeros1_idx` (`numeros_idnumeros` ASC),
+  CONSTRAINT `fk_monto_y_apuesta5_apuestas1`
+    FOREIGN KEY (`apuestas_idapuestas`)
+    REFERENCES `animalitos3`.`apuestas` (`idapuestas`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_monto_y_apuesta5_numeros1`
+    FOREIGN KEY (`numeros_idnumeros`)
+    REFERENCES `animalitos3`.`numeros` (`idnumeros`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`jugada5`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`jugada5` (
+  `idjugada5` INT NOT NULL,
+  `monto_y_apuesta5_idmonto_y_apuesta5` INT NOT NULL,
+  PRIMARY KEY (`idjugada5`),
+  INDEX `fk_jugada5_monto_y_apuesta51_idx` (`monto_y_apuesta5_idmonto_y_apuesta5` ASC),
+  CONSTRAINT `fk_jugada5_monto_y_apuesta51`
+    FOREIGN KEY (`monto_y_apuesta5_idmonto_y_apuesta5`)
+    REFERENCES `animalitos3`.`monto_y_apuesta5` (`idmonto_y_apuesta5`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`monto_y_apuesta6`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`monto_y_apuesta6` (
+  `idmonto_y_apuesta6` INT NOT NULL AUTO_INCREMENT,
+  `apuestas_idapuestas` INT NOT NULL,
+  `numeros_idnumeros` INT NOT NULL,
+  PRIMARY KEY (`idmonto_y_apuesta6`),
+  INDEX `fk_monto_y_apuesta6_apuestas1_idx` (`apuestas_idapuestas` ASC),
+  INDEX `fk_monto_y_apuesta6_numeros1_idx` (`numeros_idnumeros` ASC),
+  CONSTRAINT `fk_monto_y_apuesta6_apuestas1`
+    FOREIGN KEY (`apuestas_idapuestas`)
+    REFERENCES `animalitos3`.`apuestas` (`idapuestas`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_monto_y_apuesta6_numeros1`
+    FOREIGN KEY (`numeros_idnumeros`)
+    REFERENCES `animalitos3`.`numeros` (`idnumeros`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`jugada6`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`jugada6` (
+  `idjugada6` INT NOT NULL,
+  `monto_y_apuesta6_idmonto_y_apuesta6` INT NOT NULL,
+  PRIMARY KEY (`idjugada6`),
+  INDEX `fk_jugada6_monto_y_apuesta61_idx` (`monto_y_apuesta6_idmonto_y_apuesta6` ASC),
+  CONSTRAINT `fk_jugada6_monto_y_apuesta61`
+    FOREIGN KEY (`monto_y_apuesta6_idmonto_y_apuesta6`)
+    REFERENCES `animalitos3`.`monto_y_apuesta6` (`idmonto_y_apuesta6`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`monto_y_apuesta7`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`monto_y_apuesta7` (
+  `idmonto_y_apuesta7` INT NOT NULL AUTO_INCREMENT,
+  `apuestas_idapuestas` INT NOT NULL,
+  `numeros_idnumeros` INT NOT NULL,
+  PRIMARY KEY (`idmonto_y_apuesta7`),
+  INDEX `fk_monto_y_apuesta7_apuestas1_idx` (`apuestas_idapuestas` ASC),
+  INDEX `fk_monto_y_apuesta7_numeros1_idx` (`numeros_idnumeros` ASC),
+  CONSTRAINT `fk_monto_y_apuesta7_apuestas1`
+    FOREIGN KEY (`apuestas_idapuestas`)
+    REFERENCES `animalitos3`.`apuestas` (`idapuestas`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_monto_y_apuesta7_numeros1`
+    FOREIGN KEY (`numeros_idnumeros`)
+    REFERENCES `animalitos3`.`numeros` (`idnumeros`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`jugada7`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`jugada7` (
+  `idjugada7` INT NOT NULL AUTO_INCREMENT,
+  `monto_y_apuesta7_idmonto_y_apuesta7` INT NOT NULL,
+  PRIMARY KEY (`idjugada7`, `monto_y_apuesta7_idmonto_y_apuesta7`),
+  INDEX `fk_jugada7_monto_y_apuesta71_idx` (`monto_y_apuesta7_idmonto_y_apuesta7` ASC),
+  CONSTRAINT `fk_jugada7_monto_y_apuesta71`
+    FOREIGN KEY (`monto_y_apuesta7_idmonto_y_apuesta7`)
+    REFERENCES `animalitos3`.`monto_y_apuesta7` (`idmonto_y_apuesta7`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`monto_y_apuesta8`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`monto_y_apuesta8` (
+  `idmonto_y_apuesta8` INT NOT NULL AUTO_INCREMENT,
+  `apuestas_idapuestas` INT NOT NULL,
+  `numeros_idnumeros` INT NOT NULL,
+  PRIMARY KEY (`idmonto_y_apuesta8`),
+  INDEX `fk_monto_y_apuesta8_apuestas1_idx` (`apuestas_idapuestas` ASC),
+  INDEX `fk_monto_y_apuesta8_numeros1_idx` (`numeros_idnumeros` ASC),
+  CONSTRAINT `fk_monto_y_apuesta8_apuestas1`
+    FOREIGN KEY (`apuestas_idapuestas`)
+    REFERENCES `animalitos3`.`apuestas` (`idapuestas`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_monto_y_apuesta8_numeros1`
+    FOREIGN KEY (`numeros_idnumeros`)
+    REFERENCES `animalitos3`.`numeros` (`idnumeros`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`jugada8`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`jugada8` (
+  `idjugada8` INT NOT NULL AUTO_INCREMENT,
+  `monto_y_apuesta8_idmonto_y_apuesta8` INT NOT NULL,
+  PRIMARY KEY (`idjugada8`),
+  INDEX `fk_jugada8_monto_y_apuesta81_idx` (`monto_y_apuesta8_idmonto_y_apuesta8` ASC),
+  CONSTRAINT `fk_jugada8_monto_y_apuesta81`
+    FOREIGN KEY (`monto_y_apuesta8_idmonto_y_apuesta8`)
+    REFERENCES `animalitos3`.`monto_y_apuesta8` (`idmonto_y_apuesta8`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `animalitos3`.`ticket`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `animalitos3`.`ticket` (
+  `idticket` INT NOT NULL AUTO_INCREMENT,
+  `vendedor_idvendedor` INT NOT NULL,
+  `hora_de_sorteo_idhora_de_sorteo` INT NOT NULL,
+  `jugada1_idjugada1` INT NOT NULL,
+  `jugada2_idjugada2` INT NOT NULL,
+  `jugada3_idjugada3` INT NOT NULL,
+  `jugada4_idjugada4` INT NOT NULL,
+  `jugada5_idjugada5` INT NOT NULL,
+  `jugada6_idjugada6` INT NOT NULL,
+  `jugada7_idjugada7` INT NOT NULL,
+  `jugada7_monto_y_apuesta7_idmonto_y_apuesta7` INT NOT NULL,
+  `jugada8_idjugada8` INT NOT NULL,
+  PRIMARY KEY (`idticket`),
+  INDEX `fk_ticket_vendedor_idx` (`vendedor_idvendedor` ASC),
+  INDEX `fk_ticket_hora_de_sorteo1_idx` (`hora_de_sorteo_idhora_de_sorteo` ASC),
+  INDEX `fk_ticket_jugada11_idx` (`jugada1_idjugada1` ASC),
+  INDEX `fk_ticket_jugada21_idx` (`jugada2_idjugada2` ASC),
+  INDEX `fk_ticket_jugada31_idx` (`jugada3_idjugada3` ASC),
+  INDEX `fk_ticket_jugada41_idx` (`jugada4_idjugada4` ASC),
+  INDEX `fk_ticket_jugada51_idx` (`jugada5_idjugada5` ASC),
+  INDEX `fk_ticket_jugada61_idx` (`jugada6_idjugada6` ASC),
+  INDEX `fk_ticket_jugada71_idx` (`jugada7_idjugada7` ASC, `jugada7_monto_y_apuesta7_idmonto_y_apuesta7` ASC),
+  INDEX `fk_ticket_jugada81_idx` (`jugada8_idjugada8` ASC),
+  CONSTRAINT `fk_ticket_vendedor`
+    FOREIGN KEY (`vendedor_idvendedor`)
+    REFERENCES `animalitos3`.`vendedor` (`idvendedor`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ticket_hora_de_sorteo1`
+    FOREIGN KEY (`hora_de_sorteo_idhora_de_sorteo`)
+    REFERENCES `animalitos3`.`hora_de_sorteo` (`idhora_de_sorteo`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ticket_jugada11`
+    FOREIGN KEY (`jugada1_idjugada1`)
+    REFERENCES `animalitos3`.`jugada1` (`idjugada1`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ticket_jugada21`
+    FOREIGN KEY (`jugada2_idjugada2`)
+    REFERENCES `animalitos3`.`jugada2` (`idjugada2`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ticket_jugada31`
+    FOREIGN KEY (`jugada3_idjugada3`)
+    REFERENCES `animalitos3`.`jugada3` (`idjugada3`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ticket_jugada41`
+    FOREIGN KEY (`jugada4_idjugada4`)
+    REFERENCES `animalitos3`.`jugada4` (`idjugada4`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ticket_jugada51`
+    FOREIGN KEY (`jugada5_idjugada5`)
+    REFERENCES `animalitos3`.`jugada5` (`idjugada5`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ticket_jugada61`
+    FOREIGN KEY (`jugada6_idjugada6`)
+    REFERENCES `animalitos3`.`jugada6` (`idjugada6`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ticket_jugada71`
+    FOREIGN KEY (`jugada7_idjugada7` , `jugada7_monto_y_apuesta7_idmonto_y_apuesta7`)
+    REFERENCES `animalitos3`.`jugada7` (`idjugada7` , `monto_y_apuesta7_idmonto_y_apuesta7`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ticket_jugada81`
+    FOREIGN KEY (`jugada8_idjugada8`)
+    REFERENCES `animalitos3`.`jugada8` (`idjugada8`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
